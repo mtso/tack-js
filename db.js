@@ -1,13 +1,19 @@
+// Matthew Tso, 2017
+
 var store = {}
 var count = {}
 var block = []
 var isUndo = false
+
+// Transaction helper function
 
 function stage(name) {
   if (!isUndo && block.length > 0 && !block[block.length - 1][name]) {
     block[block.length - 1][name] = store[name]
   }
 }
+
+// Commands
 
 function get(name) {
   return store[name] || 'NULL'
@@ -39,6 +45,8 @@ function unset(name) {
 function end() {
   process.exit()
 }
+
+// Transactions
 
 function begin() {
   block.push({})
