@@ -1,6 +1,8 @@
 # Thumbtack's Simple Database Challenge
 
-## How to Use
+Javascript solution to [Thumbtack's Simple Database Challenge](https://www.thumbtack.com/challenges/simple-database).
+
+## Usage
 
 This project requires at least node.js v4.6.1.
 
@@ -20,21 +22,23 @@ $ node tack-js < ./tack-js/test/cmd-1.txt
 I started with the GET, SET, and UNSET commands to make sure that it would
 be possible to use Javascript objects as buckets to store variables.
 I next dealt with the NUMEQUALTO command by creating another Javascript
-object to keep track of value counts.
+object to keep track of value counts. This makes the lookup speed for 
+values and value counts faster at the expense of memory and input speed.
 
 For the transactions, I first tried saving a snapshot of the storage
-and count objects nested into a root object. I would then assign all the
-changes from each transaction block on top of its previous snapshot when
-the user issued a COMMIT command. This would have violated the performance
-requirement for the memory usage of transactions. 
+and count objects nested into a root object. Each transaction block 
+assigns the changes on top of its previous snapshot when the user issues
+a COMMIT command. This violates the performance requirement for the
+memory usage of transactions, because each BEGIN command duplicates the 
+existing storage.
 
 My next idea to solve this problem was to save a list of commands per 
 transactional block, and then play these commands on top of one another 
 upon COMMIT. However, in order to retrieve a value, each transaction
-would need to be checked. If the latest transaction did not contain a value
-for the give name, the next latest transaction would need to be checked,
-and so on until all the transactions were checked. This also made keeping 
-track of where data was actually stored quite time consuming.
+needs to be checked. If the latest transaction does not contain a value
+for the given name, the next latest transaction is checked, and so on 
+until all the transactions are checked. This makes keeping track of 
+where data is actually stored very time consuming.
 
 The final solution is to apply all SET and UNSET commands directly onto
 the storage objects, and to only save the previous state of each variable
@@ -44,8 +48,8 @@ a ROLLBACK. In a ROLLBACK, the previous state of each variable is applied
 back onto the single storage object, and if the previous value associated 
 with a name is undefined, it is directly deleted off the storage object.
 The result of keeping the storage object up-to-date at each step is that 
-this is that the COMMIT command only needs to wipe the transaction history
-to permanently apply all transactional changes.
+the COMMIT command only needs to wipe the transaction history to permanently 
+apply all transactional changes.
 
 ## Performance
 
