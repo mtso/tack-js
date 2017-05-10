@@ -1,5 +1,7 @@
 // Matthew Tso, 2017
 
+'use strict'
+
 var store = {}
 var count = {}
 var block = []
@@ -77,12 +79,12 @@ function commit() {
 }
 
 module.exports = {
-  get,
-  set,
-  unset,
-  numequalto,
-  end,
-  begin,
-  rollback,
-  commit,
+  get: get,
+  set: set,
+  unset: unset,
+  numequalto: numequalto,
+  end: end,
+  begin: begin,
+  rollback: rollback,
+  commit: commit,
 }

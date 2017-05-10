@@ -1,3 +1,7 @@
+// Matthew Tso, 2017
+
+'use strict'
+
 const readline = require('readline')
 const db = require('./db')
 

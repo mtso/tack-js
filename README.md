@@ -2,7 +2,9 @@
 
 ## How to Use
 
-You will need at least node.js v6.9.1
+This project requires at least node.js v4.6.1.
+
+To install and run the project:
 ```
 $ git clone https://github.com/mtso/tack-js
 $ node tack-js
