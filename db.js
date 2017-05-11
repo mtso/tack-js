@@ -5,13 +5,13 @@
 var store = {}
 var count = {}
 var block = []
-var isUndo = false
 
 // Transaction helper function
 
-function stage(name) {
-  if (!isUndo && block.length > 0 && !block[block.length - 1][name]) {
-    block[block.length - 1][name] = store[name]
+function stash(name) {
+  let current = block.length - 1
+  if (block.length > 0 && !block[current][name]) {
+    block[current][name] = store[name]
   }
 }
 
@@ -26,14 +26,12 @@ function numequalto(value) {
 }
 
 function set(name, value) {
-  stage(name)
   unset(name)
   store[name] = value
   count[value] = count[value] + 1 || 1
 }
 
 function unset(name) {
-  stage(name)
   let value = get(name)
   if (count[value] > 1) {
     count[value] -= 1
@@ -58,7 +56,6 @@ function rollback() {
   if (block.length === 0) {
     return 'NO TRANSACTION'
   }
-  isUndo = true
   let last = block.pop()
   let undo = function(key) {
     if (last[key]) {
@@ -68,7 +65,6 @@ function rollback() {
     }
   }
   Object.keys(last).forEach(undo)
-  isUndo = false
 }
 
 function commit() {
@@ -78,10 +74,18 @@ function commit() {
   block = []
 }
 
+// Export command table, wrapping set and unset with stash.
+
 module.exports = {
+  set: function(name, value) {
+    stash(name)
+    set(name, value)
+  },
+  unset: function(name) {
+    stash(name)
+    unset(name)
+  },
   get: get,
-  set: set,
-  unset: unset,
   numequalto: numequalto,
   end: end,
   begin: begin,
